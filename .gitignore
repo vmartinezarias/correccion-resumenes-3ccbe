@@ -1,0 +1,5 @@
+# Datos con comentarios de revisión: nunca al repositorio
+*.xlsx
+*.csv
+02_datos.sql
+privado/

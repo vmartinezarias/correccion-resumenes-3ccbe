@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Corrección de resúmenes · 3er Congreso Colombiano de Bioacústica y Ecoacústica</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --navy: #133A5A;
+  --verde: #20685E;
+  --verde-claro: #E3EFEC;
+  --papel: #F5F7F6;
+  --superficie: #FFFFFF;
+  --tinta: #18242E;
+  --tinta-suave: #52616C;
+  --linea: #D6DEE1;
+  --ambar: #9A5B12;
+  --ambar-claro: #FBF0E1;
+  --rojo: #A3312A;
+  --rojo-claro: #FBE9E7;
+  --anillo: rgba(19, 58, 90, .07);
+  --sans: "Montserrat", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --radio: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --navy: #9CC3E6;
+    --verde: #5FBFAE;
+    --verde-claro: #183A35;
+    --papel: #0F1820;
+    --superficie: #16222C;
+    --tinta: #E6EDF1;
+    --tinta-suave: #9DB0BC;
+    --linea: #2B3B47;
+    --ambar: #E8B06A;
+    --ambar-claro: #3A2A14;
+    --rojo: #F09A92;
+    --rojo-claro: #3D1E1B;
+    --anillo: rgba(156, 195, 230, .08);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --navy: #9CC3E6; --verde: #5FBFAE; --verde-claro: #183A35; --papel: #0F1820;
+  --superficie: #16222C; --tinta: #E6EDF1; --tinta-suave: #9DB0BC; --linea: #2B3B47;
+  --ambar: #E8B06A; --ambar-claro: #3A2A14; --rojo: #F09A92; --rojo-claro: #3D1E1B;
+  --anillo: rgba(156, 195, 230, .08);
+}
+
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; background: var(--papel); color: var(--tinta);
+  font-family: var(--sans); font-size: 15px; line-height: 1.5;
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+
+/* ---------- Ingreso ---------- */
+#ingreso {
+  min-height: 100vh; display: grid; place-items: center; padding: 32px 20px;
+  background:
+    repeating-radial-gradient(circle at 50% 30%, transparent 0 34px, var(--anillo) 34px 38px);
+}
+.tarjeta-ingreso {
+  width: 100%; max-width: 420px; text-align: center;
+}
+.logo-ingreso {
+  width: 240px; height: auto; display: block; margin: 0 auto 8px;
+  background: #fff; border-radius: 18px; padding: 14px 18px;
+}
+.tarjeta-ingreso h1 {
+  font-size: 1.55rem; font-weight: 800; line-height: 1.2; color: var(--navy);
+  margin: 18px 0 8px; letter-spacing: -.01em;
+}
+.tarjeta-ingreso .intro { color: var(--tinta-suave); margin: 0 auto 26px; max-width: 34ch; }
+.formulario {
+  background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio);
+  padding: 22px; text-align: left;
+}
+label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
+.campo {
+  width: 100%; padding: 11px 12px; border: 1px solid var(--linea); border-radius: 8px;
+  background: var(--superficie);
+}
+.campo:focus { border-color: var(--verde); outline: none; box-shadow: 0 0 0 3px var(--verde-claro); }
+.ayuda { font-size: .85rem; color: var(--tinta-suave); margin: 8px 0 0; }
+.mensaje { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; font-size: .9rem; }
+.mensaje.error { background: var(--rojo-claro); color: var(--rojo); }
+.mensaje.ok { background: var(--verde-claro); color: var(--verde); }
+
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 18px; border-radius: 8px; border: 1px solid transparent;
+  font-weight: 700; cursor: pointer; text-decoration: none; font-size: .93rem;
+}
+.boton:disabled { opacity: .55; cursor: progress; }
+.boton.primario { background: var(--verde); color: #fff; }
+:root[data-theme="dark"] .boton.primario { color: #0F1820; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .boton.primario { color: #0F1820; } }
+.boton.primario:hover:not(:disabled) { filter: brightness(1.08); }
+.boton.secundario { background: transparent; border-color: var(--linea); color: var(--tinta); }
+.boton.secundario:hover:not(:disabled) { border-color: var(--verde); color: var(--verde); }
+.boton.texto { background: none; border: none; padding: 6px 2px; color: var(--verde); font-weight: 600; }
+.boton.ancho { width: 100%; margin-top: 16px; }
+
+/* ---------- Barra superior ---------- */
+.barra {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--superficie); border-bottom: 1px solid var(--linea);
+}
+body.con-barra::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 21; background: var(--superficie);
+}
+.barra-interior {
+  max-width: 1200px; margin: 0 auto; padding: 10px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.barra img { width: 34px; height: auto; background: #fff; border-radius: 50%; padding: 3px; }
+.barra .nombre { font-weight: 800; color: var(--navy); font-size: .95rem; line-height: 1.2; }
+.barra .nombre span { display: block; font-weight: 500; color: var(--tinta-suave); font-size: .78rem; }
+.barra .espacio { flex: 1; }
+.barra .usuario { font-size: .85rem; color: var(--tinta-suave); overflow-wrap: anywhere; text-align: right; }
+
+main { max-width: 1200px; margin: 0 auto; padding: 28px 20px 64px; }
+h2 { font-size: 1.35rem; font-weight: 800; color: var(--navy); margin: 0 0 6px; letter-spacing: -.01em; }
+.sub { color: var(--tinta-suave); margin: 0 0 22px; max-width: 70ch; }
+
+/* ---------- Estados ---------- */
+.estado {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: .78rem; font-weight: 700; white-space: nowrap;
+}
+.estado.pendiente { background: transparent; border: 1px solid var(--linea); color: var(--tinta-suave); }
+.estado.borrador  { background: var(--ambar-claro); color: var(--ambar); }
+.estado.listo     { background: var(--verde-claro); color: var(--verde); }
+
+/* ---------- Lista del autor ---------- */
+.lista-autor { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: 820px; }
+.lista-autor button {
+  width: 100%; text-align: left; cursor: pointer;
+  background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio);
+  padding: 16px 18px; display: grid; gap: 6px;
+}
+.lista-autor button:hover { border-color: var(--verde); }
+.lista-autor .titulo { font-family: var(--serif); font-size: 1.1rem; font-weight: 600; line-height: 1.35; }
+.lista-autor .meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: .85rem; color: var(--tinta-suave); }
+
+/* ---------- Editor ---------- */
+.volver { margin-bottom: 14px; }
+.cabecera-editor { margin-bottom: 22px; max-width: 80ch; }
+.cabecera-editor .meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: .86rem; color: var(--tinta-suave); margin-top: 8px; }
+.rejilla-editor { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) {
+  .rejilla-editor { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+  .rejilla-editor aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 76px); max-height: calc(100vh - 100px); overflow: auto; }
+}
+aside h3, .panel-edicion h3 { font-size: 1rem; font-weight: 700; margin: 0 0 12px; color: var(--navy); }
+.revision {
+  border-left: 3px solid var(--verde); background: var(--superficie);
+  border-radius: 0 var(--radio) var(--radio) 0; padding: 14px 16px; margin-bottom: 14px;
+}
+.revision h4 { margin: 0 0 8px; font-size: .92rem; font-weight: 700; }
+.revision h5 { margin: 12px 0 4px; font-size: .8rem; font-weight: 600; color: var(--tinta-suave); }
+.revision h5:first-of-type { margin-top: 0; }
+.revision p, .original p {
+  font-family: var(--serif); font-size: 1rem; line-height: 1.6; margin: 0; white-space: pre-wrap;
+}
+.sin-comentarios { color: var(--tinta-suave); font-size: .92rem; background: var(--superficie); border: 1px dashed var(--linea); border-radius: var(--radio); padding: 14px 16px; }
+details.original { margin-top: 6px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--superficie); }
+details.original summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: .92rem; }
+details.original .cuerpo { padding: 0 16px 16px; display: grid; gap: 12px; }
+details.original .rotulo { font-size: .8rem; font-weight: 600; color: var(--tinta-suave); margin-bottom: 2px; }
+
+.panel-edicion { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); padding: 22px; }
+.panel-edicion .grupo { margin-bottom: 18px; }
+textarea.campo { resize: vertical; font-family: var(--serif); font-size: 1.05rem; line-height: 1.65; }
+#ed-titulo { font-weight: 600; }
+#ed-resumen { min-height: 360px; }
+.contador { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; color: var(--tinta-suave); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.contador.excede { color: var(--rojo); font-weight: 600; }
+.acciones { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
+.acciones .espacio { flex: 1; }
+.guardado { font-size: .85rem; color: var(--tinta-suave); }
+.aviso {
+  padding: 12px 14px; border-radius: 8px; margin-bottom: 18px; font-size: .92rem;
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+}
+.aviso.listo { background: var(--verde-claro); color: var(--verde); }
+.aviso.local { background: var(--ambar-claro); color: var(--ambar); }
+.campo[readonly] { background: var(--papel); }
+
+/* ---------- Panel de administración ---------- */
+.resumen-avance { display: flex; flex-wrap: wrap; gap: 14px 34px; margin: 4px 0 22px; align-items: baseline; }
+.resumen-avance .grande { font-size: 2.6rem; font-weight: 800; color: var(--verde); line-height: 1; font-variant-numeric: tabular-nums; }
+.resumen-avance .grande small { font-size: 1.1rem; color: var(--tinta-suave); font-weight: 600; }
+.resumen-avance .dato { font-size: .92rem; color: var(--tinta-suave); }
+.resumen-avance .dato b { color: var(--tinta); font-variant-numeric: tabular-nums; }
+.barra-avance { height: 8px; border-radius: 999px; background: var(--linea); overflow: hidden; display: flex; margin-bottom: 24px; max-width: 640px; }
+.barra-avance .l { background: var(--verde); }
+.barra-avance .b { background: var(--ambar); }
+.herramientas { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 16px; }
+.herramientas .filtro { display: grid; gap: 4px; }
+.herramientas label { font-size: .8rem; margin: 0; color: var(--tinta-suave); }
+.herramientas .campo { padding: 8px 10px; }
+#f-simposio { max-width: 300px; }
+#f-q { min-width: 220px; }
+td:nth-child(3) { min-width: 190px; }
+.herramientas .espacio { flex: 1; }
+.tabla-envoltura { overflow-x: auto; background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+th { font-size: .8rem; color: var(--tinta-suave); font-weight: 600; background: var(--superficie); position: sticky; top: 0; }
+tr:last-child td { border-bottom: none; }
+td.num { font-variant-numeric: tabular-nums; color: var(--tinta-suave); }
+td .enlace { background: none; border: none; padding: 0; text-align: left; cursor: pointer; color: var(--tinta); font-family: var(--serif); font-size: .98rem; font-weight: 600; line-height: 1.35; }
+td .enlace:hover { color: var(--verde); text-decoration: underline; }
+td .pequeno { display: block; font-size: .8rem; color: var(--tinta-suave); margin-top: 2px; overflow-wrap: anywhere; }
+.vacio { padding: 28px; text-align: center; color: var(--tinta-suave); }
+
+dialog {
+  border: 1px solid var(--linea); border-radius: var(--radio); padding: 24px; max-width: 460px;
+  background: var(--superficie); color: var(--tinta);
+}
+dialog::backdrop { background: rgba(10, 20, 30, .45); }
+dialog h3 { margin: 0 0 10px; color: var(--navy); }
+dialog p { margin: 0 0 18px; color: var(--tinta-suave); }
+dialog .acciones { justify-content: flex-end; }
+
+.cargando { padding: 60px 20px; text-align: center; color: var(--tinta-suave); }
+.toast {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%);
+  background: var(--tinta); color: var(--papel); padding: 10px 16px; border-radius: 8px; font-size: .9rem;
+  z-index: 50; max-width: calc(100% - 40px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toast { animation: aparecer .2s ease-out; }
+  @keyframes aparecer { from { opacity: 0; transform: translate(-50%, 8px); } }
+}
+@media (max-width: 600px) {
+  .barra .nombre span { display: none; }
+  main { padding-top: 20px; }
+  .panel-edicion { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Ingreso ===== -->
+<section id="ingreso" hidden>
+  <div class="tarjeta-ingreso">
+    <img class="logo-ingreso" src="logo.png" alt="3er Congreso Colombiano de Bioacústica y Ecoacústica, Bogotá, Colombia">
+    <h1>Corrección de resúmenes</h1>
+    <p class="intro">Revisa los comentarios de los evaluadores, ajusta tu resumen y entrégalo desde aquí.</p>
+
+    <form id="form-correo" class="formulario" novalidate>
+      <label for="in-correo">Usuario</label>
+      <input id="in-correo" class="campo" type="email" autocomplete="username" inputmode="email" required placeholder="nombre@institucion.org">
+      <p class="ayuda">El correo con el que enviaste el resumen en Oxford Abstracts.</p>
+      <label for="in-clave" style="margin-top:16px">Contraseña</label>
+      <input id="in-clave" class="campo" type="password" autocomplete="current-password" required>
+      <p class="ayuda">Tu contraseña es ese mismo correo.</p>
+      <button class="boton primario ancho" type="submit">Entrar</button>
+      <div id="msg-correo" class="mensaje" hidden></div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== Aplicación ===== -->
+<div id="app" hidden>
+  <header class="barra">
+    <div class="barra-interior">
+      <img src="logo.png" alt="">
+      <div class="nombre">Corrección de resúmenes<span>3er Congreso Colombiano de Bioacústica y Ecoacústica</span></div>
+      <div class="espacio"></div>
+      <div class="usuario" id="usuario"></div>
+      <button class="boton secundario" id="btn-salir" type="button">Salir</button>
+    </div>
+  </header>
+  <main id="contenido"><div class="cargando">Cargando…</div></main>
+</div>
+
+<dialog id="dlg-entregar">
+  <h3>¿Entregar el resumen corregido?</h3>
+  <p>Después de entregarlo ya no podrás editarlo. Si luego necesitas un cambio, tendrás que pedirlo al comité organizador.</p>
+  <div class="acciones">
+    <button class="boton secundario" value="no" type="button" data-cerrar>Seguir editando</button>
+    <button class="boton primario" value="si" type="button" id="btn-confirmar-entrega">Entregar</button>
+  </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<script>
+(function () {
+  "use strict";
+  const C = window.CONFIG || {};
+  const $ = (s) => document.querySelector(s);
+
+  // ---------- Utilidades ----------
+  function h(tag, attrs, ...hijos) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+      else if (k in el && typeof v !== "string") el[k] = v;
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (const hijo of hijos.flat()) {
+      if (hijo === null || hijo === undefined || hijo === false) continue;
+      el.append(hijo instanceof Node ? hijo : document.createTextNode(String(hijo)));
+    }
+    return el;
+  }
+  const palabras = (t) => (t || "").trim().split(/\s+/).filter(Boolean).length;
+  const fmtFecha = (iso) => iso ? new Intl.DateTimeFormat("es-CO", {
+    dateStyle: "medium", timeStyle: "short", timeZone: "America/Bogota"
+  }).format(new Date(iso)) : "";
+  const simposioCorto = (s) => (s || "").replace(/^\s*\d+\s*-\s*/, "");
+  const DECISION = { "Accepted: Oral": "Ponencia oral", "Accepted: Poster": "Póster", "Pending": "Decisión pendiente" };
+  const ESTADO = { pendiente: "Sin cambios", borrador: "En edición", listo: "Entregado" };
+  const chipEstado = (e) => h("span", { class: "estado " + e }, ESTADO[e] || e);
+
+  function toast(texto) {
+    const t = h("div", { class: "toast", role: "status" }, texto);
+    document.body.append(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+  function mostrarMensaje(sel, texto, tipo) {
+    const m = $(sel);
+    m.textContent = texto; m.className = "mensaje " + (tipo || "error"); m.hidden = !texto;
+  }
+  function guardarLocal(clave, valor) { try { localStorage.setItem(clave, JSON.stringify(valor)); } catch (e) {} }
+  function leerLocal(clave) { try { const v = localStorage.getItem(clave); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function borrarLocal(clave) { try { localStorage.removeItem(clave); } catch (e) {} }
+
+  // ---------- Configuración ----------
+  if (!C.SUPABASE_URL || C.SUPABASE_URL.includes("TU-PROYECTO") || !window.supabase) {
+    document.body.innerHTML = "";
+    document.body.append(h("main", {},
+      h("h2", {}, "Falta configurar la plataforma"),
+      h("p", { class: "sub" }, "Edita el archivo config.js con la URL y la clave pública (anon) de tu proyecto de Supabase.")));
+    return;
+  }
+  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  });
+
+  const S = { correo: "", admin: false, filas: [], sucio: false,
+              filtro: { estado: "todos", simposio: "todos", q: "" } };
+
+  window.addEventListener("beforeunload", (e) => { if (S.sucio) { e.preventDefault(); e.returnValue = ""; } });
+
+  // ---------- Ingreso ----------
+  // Usuario = correo y contraseña = correo. Si la cuenta aún no existe en
+  // Supabase, se crea en el primer ingreso (requiere "Confirm email" apagado).
+  function mostrarIngreso() {
+    document.body.classList.remove("con-barra");
+    $("#app").hidden = true; $("#ingreso").hidden = false;
+    $("#in-clave").value = "";
+    mostrarMensaje("#msg-correo", "");
+    $("#in-correo").focus();
+  }
+
+  $("#form-correo").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const correo = $("#in-correo").value.trim().toLowerCase();
+    const clave = $("#in-clave").value.trim().toLowerCase();
+    const boton = e.submitter || $("#form-correo button");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+      return mostrarMensaje("#msg-correo", "Escribe un correo válido, por ejemplo nombre@institucion.org.");
+    }
+    if (clave !== correo) {
+      return mostrarMensaje("#msg-correo", "La contraseña no coincide. Recuerda que tu contraseña es el mismo correo con el que entras.");
+    }
+    boton.disabled = true; mostrarMensaje("#msg-correo", "");
+    try {
+      const { data: puede, error: e1 } = await sb.rpc("puede_ingresar", { p_correo: correo });
+      if (e1) throw e1;
+      if (!puede) {
+        return mostrarMensaje("#msg-correo",
+          "No hay resúmenes registrados con este correo. Usa el mismo correo con el que hiciste el envío en Oxford Abstracts" +
+          (C.CORREO_CONTACTO ? " o escribe a " + C.CORREO_CONTACTO + "." : "."));
+      }
+      let { data, error } = await sb.auth.signInWithPassword({ email: correo, password: clave });
+      if (error && /invalid login credentials/i.test(error.message)) {
+        // Primer ingreso: crear la cuenta
+        const r = await sb.auth.signUp({ email: correo, password: clave });
+        if (r.error) throw r.error;
+        if (!r.data.session) {
+          throw new Error("La cuenta se creó pero Supabase pide confirmarla por correo. " +
+            "El administrador debe apagar \u201cConfirm email\u201d en Authentication > Sign In / Providers > Email.");
+        }
+        data = r.data; error = null;
+      }
+      if (error) throw error;
+      entrar(data.session);
+    } catch (err) {
+      const msg = (err && err.status === 429)
+        ? "Demasiados intentos seguidos. Espera un par de minutos y vuelve a intentarlo."
+        : "No se pudo entrar: " + (err.message || err);
+      mostrarMensaje("#msg-correo", msg);
+    } finally { boton.disabled = false; }
+  });
+
+  $("#btn-salir").addEventListener("click", async () => {
+    if (S.sucio && !confirm("Tienes cambios sin guardar. ¿Salir de todas formas?")) return;
+    S.sucio = false;
+    await sb.auth.signOut();
+    mostrarIngreso();
+  });
+
+  // ---------- Sesión ----------
+  async function entrar(session) {
+    S.correo = (session.user.email || "").toLowerCase();
+    $("#ingreso").hidden = true; $("#app").hidden = false;
+    document.body.classList.add("con-barra");
+    $("#usuario").textContent = S.correo;
+    $("#contenido").replaceChildren(h("div", { class: "cargando" }, "Cargando…"));
+    const { data: esAdmin } = await sb.rpc("es_admin");
+    S.admin = !!esAdmin;
+    await cargarFilas();
+    if (S.admin) vistaAdmin();
+    else if (S.filas.length === 1) vistaEditor(S.filas[0].id);
+    else vistaLista();
+  }
+
+  async function cargarFilas() {
+    const { data, error } = await sb.from("resumenes").select("*").order("id");
+    if (error) { toast("No se pudieron cargar los resúmenes: " + error.message); S.filas = []; return; }
+    S.filas = data || [];
+  }
+
+  // ---------- Vista: lista del autor ----------
+  function vistaLista() {
+    window.scrollTo(0, 0);
+    const c = $("#contenido");
+    if (!S.filas.length) {
+      c.replaceChildren(h("h2", {}, "No hay resúmenes asociados a este correo"),
+        h("p", { class: "sub" }, "Ingresa con el correo que usaste para hacer el envío en Oxford Abstracts."));
+      return;
+    }
+    const faltan = S.filas.filter((f) => f.estado !== "listo").length;
+    c.replaceChildren(
+      h("h2", {}, "Tus resúmenes"),
+      h("p", { class: "sub" },
+        faltan ? `Tienes ${faltan} de ${S.filas.length} por entregar. Abre cada uno para ver los comentarios y corregirlo.`
+               : "Ya entregaste todos tus resúmenes. ¡Gracias!",
+        C.FECHA_LIMITE ? ` Fecha límite: ${C.FECHA_LIMITE}.` : ""),
+      h("ul", { class: "lista-autor" }, S.filas.map((f) => h("li", {},
+        h("button", { type: "button", onclick: () => vistaEditor(f.id) },
+          h("span", { class: "titulo" }, f.titulo || f.titulo_original || "(Sin título)"),
+          h("span", { class: "meta" }, chipEstado(f.estado), h("span", {}, simposioCorto(f.simposio)), h("span", {}, DECISION[f.decision] || f.decision)))))));
+  }
+
+  // ---------- Vista: editor ----------
+  function vistaEditor(id) {
+    window.scrollTo(0, 0);
+    const f = S.filas.find((x) => x.id === id);
+    if (!f) return;
+    const bloqueado = f.estado === "listo" && !S.admin;
+    const claveLocal = "borrador-" + f.id;
+    S.sucio = false;
+
+    const volver = () => {
+      if (S.sucio && !confirm("Tienes cambios sin guardar. ¿Volver de todas formas?")) return;
+      S.sucio = false;
+      S.admin ? vistaAdmin() : vistaLista();
+    };
+
+    const revs = Array.isArray(f.revisiones) ? f.revisiones : [];
+    const bloqueRevisiones = revs.length
+      ? revs.map((r) => h("div", { class: "revision" },
+          h("h4", {}, "Revisor " + r.revisor),
+          r.generales ? [h("h5", {}, "Comentarios generales"), h("p", {}, r.generales)] : null,
+          r.texto ? [h("h5", {}, "Comentarios sobre el texto"), h("p", {}, r.texto)] : null))
+      : h("div", { class: "sin-comentarios" }, "Los revisores no dejaron comentarios escritos. Revisa la redacción y, si todo está bien, entrega el resumen.");
+
+    const inTitulo = h("textarea", { id: "ed-titulo", class: "campo", rows: 2, readOnly: bloqueado }, );
+    const inAutores = h("textarea", { id: "ed-autores", class: "campo", rows: 2, readOnly: bloqueado });
+    const inResumen = h("textarea", { id: "ed-resumen", class: "campo", readOnly: bloqueado });
+    inTitulo.value = f.titulo ?? f.titulo_original ?? "";
+    inAutores.value = f.autores ?? f.autores_original ?? "";
+    inResumen.value = f.resumen ?? f.resumen_original ?? "";
+
+    const contador = h("div", { class: "contador", "aria-live": "polite" });
+    const guardadoTxt = h("span", { class: "guardado" }, f.actualizado ? "Última edición: " + fmtFecha(f.actualizado) : "");
+    const max = Number(C.PALABRAS_MAX) || 0;
+    function actualizarContador() {
+      const n = palabras(inResumen.value);
+      contador.replaceChildren(
+        h("span", {}, max ? `${n} de ${max} palabras` : `${n} palabras`),
+        h("span", {}, max && n > max ? `Sobran ${n - max}` : ""));
+      contador.classList.toggle("excede", !!max && n > max);
+    }
+    actualizarContador();
+
+    function alEditar() {
+      S.sucio = true; actualizarContador();
+      guardarLocal(claveLocal, { titulo: inTitulo.value, autores: inAutores.value, resumen: inResumen.value, t: Date.now() });
+    }
+    [inTitulo, inAutores, inResumen].forEach((el) => el.addEventListener("input", alEditar));
+
+    async function guardar(nuevoEstado) {
+      const botones = c.querySelectorAll(".acciones .boton");
+      botones.forEach((b) => (b.disabled = true));
+      const cambios = { titulo: inTitulo.value.trim(), autores: inAutores.value.trim(), resumen: inResumen.value.trim(), estado: nuevoEstado };
+      const { data, error } = await sb.from("resumenes").update(cambios).eq("id", f.id).select().single();
+      botones.forEach((b) => (b.disabled = false));
+      if (error) { toast("No se guardó: " + error.message); return false; }
+      Object.assign(f, data);
+      S.sucio = false; borrarLocal(claveLocal);
+      return true;
+    }
+
+    const acciones = [];
+    if (!bloqueado) {
+      acciones.push(h("button", { class: "boton secundario", type: "button", onclick: async () => {
+        const nuevo = f.estado === "listo" ? "listo" : "borrador";
+        if (await guardar(nuevo)) { toast("Cambios guardados"); guardadoTxt.textContent = "Última edición: " + fmtFecha(f.actualizado); }
+      } }, "Guardar borrador"));
+      if (f.estado !== "listo") {
+        acciones.push(h("button", { class: "boton primario", type: "button", onclick: () => abrirEntrega() }, "Entregar resumen corregido"));
+      }
+    }
+    if (S.admin && f.estado === "listo") {
+      acciones.push(h("button", { class: "boton secundario", type: "button", onclick: async () => {
+        if (!confirm("El autor podrá volver a editar este resumen. ¿Continuar?")) return;
+        if (await guardar("borrador")) { toast("Devuelto a edición"); vistaEditor(f.id); }
+      } }, "Devolver a edición"));
+    }
+
+    function abrirEntrega() {
+      if (!inResumen.value.trim()) { toast("El resumen no puede quedar vacío."); return; }
+      const dlg = $("#dlg-entregar");
+      const n = palabras(inResumen.value);
+      dlg.querySelector("p").textContent = (max && n > max ? `Ojo: el resumen tiene ${n} palabras y el límite es ${max}. ` : "") +
+        "Después de entregarlo ya no podrás editarlo. Si luego necesitas un cambio, tendrás que pedirlo al comité organizador.";
+      $("#btn-confirmar-entrega").onclick = async () => {
+        dlg.close();
+        if (await guardar("listo")) { toast("Resumen entregado"); vistaEditor(f.id); }
+      };
+      dlg.showModal();
+    }
+
+    let avisoLocal = null;
+    const local = leerLocal(claveLocal);
+    if (local && !bloqueado && (local.titulo !== inTitulo.value || local.autores !== inAutores.value || local.resumen !== inResumen.value)) {
+      avisoLocal = h("div", { class: "aviso local" },
+        "Hay cambios sin guardar de una sesión anterior en este navegador.",
+        h("button", { class: "boton texto", type: "button", onclick: () => {
+          inTitulo.value = local.titulo; inAutores.value = local.autores; inResumen.value = local.resumen;
+          S.sucio = true; actualizarContador(); avisoLocal.remove();
+        } }, "Recuperarlos"),
+        h("button", { class: "boton texto", type: "button", onclick: () => { borrarLocal(claveLocal); avisoLocal.remove(); } }, "Descartar"));
+    }
+
+    const c = $("#contenido");
+    c.replaceChildren(
+      h("button", { class: "boton texto volver", type: "button", onclick: volver }, S.admin ? "‹ Volver al panel" : "‹ Volver a mis resúmenes"),
+      h("div", { class: "cabecera-editor" },
+        h("h2", {}, f.titulo_original || "(Sin título)"),
+        h("div", { class: "meta" }, chipEstado(f.estado), h("span", {}, simposioCorto(f.simposio)), h("span", {}, DECISION[f.decision] || f.decision),
+          S.admin ? h("span", {}, `ID ${f.id} — ${f.nombre_remitente} <${f.correo}>`) : null)),
+      h("div", { class: "rejilla-editor" },
+        h("aside", {},
+          h("h3", {}, "Comentarios de los revisores"),
+          bloqueRevisiones,
+          h("details", { class: "original" },
+            h("summary", {}, "Ver el resumen tal como se envió"),
+            h("div", { class: "cuerpo" },
+              h("div", {}, h("div", { class: "rotulo" }, "Título"), h("p", {}, f.titulo_original || "")),
+              h("div", {}, h("div", { class: "rotulo" }, "Autores"), h("p", {}, f.autores_original || "")),
+              h("div", {}, h("div", { class: "rotulo" }, "Resumen"), h("p", {}, f.resumen_original || ""))))),
+        h("section", { class: "panel-edicion" },
+          f.estado === "listo" ? h("div", { class: "aviso listo" },
+            `Entregado el ${fmtFecha(f.listo_en)}.` +
+            (S.admin ? " Como administrador puedes seguir editándolo." :
+              " Si necesitas un cambio, escribe al comité organizador" + (C.CORREO_CONTACTO ? " (" + C.CORREO_CONTACTO + ")." : "."))) : null,
+          avisoLocal,
+          h("h3", {}, bloqueado ? "Versión entregada" : "Tu versión corregida"),
+          h("div", { class: "grupo" }, h("label", { for: "ed-titulo" }, "Título"), inTitulo),
+          h("div", { class: "grupo" }, h("label", { for: "ed-autores" }, "Autores"), inAutores,
+            h("p", { class: "ayuda" }, "Separados por comas, en el orden en que deben aparecer.")),
+          h("div", { class: "grupo" }, h("label", { for: "ed-resumen" }, "Resumen"), inResumen, contador),
+          acciones.length ? h("div", { class: "acciones" }, acciones, h("span", { class: "espacio" }), guardadoTxt) : null)));
+
+    // Ajusta la altura del resumen a su contenido
+    const ajustar = () => { inResumen.style.height = "auto"; inResumen.style.height = Math.max(360, inResumen.scrollHeight + 4) + "px"; };
+    inResumen.addEventListener("input", ajustar); requestAnimationFrame(ajustar);
+  }
+
+  // ---------- Vista: panel de administración ----------
+  function vistaAdmin() {
+    window.scrollTo(0, 0);
+    const c = $("#contenido");
+    const total = S.filas.length;
+    const cuenta = (e) => S.filas.filter((f) => f.estado === e).length;
+    const nL = cuenta("listo"), nB = cuenta("borrador"), nP = cuenta("pendiente");
+    const simposios = [...new Set(S.filas.map((f) => f.simposio).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
+
+    const selEstado = h("select", { class: "campo", id: "f-estado", onchange: (e) => { S.filtro.estado = e.target.value; pintarTabla(); } },
+      [["todos", "Todos"], ["listo", "Entregados"], ["borrador", "En edición"], ["pendiente", "Sin cambios"]]
+        .map(([v, t]) => h("option", { value: v, selected: S.filtro.estado === v }, t)));
+    const selSimp = h("select", { class: "campo", id: "f-simposio", onchange: (e) => { S.filtro.simposio = e.target.value; pintarTabla(); } },
+      h("option", { value: "todos" }, "Todos"),
+      simposios.map((s) => h("option", { value: s, selected: S.filtro.simposio === s }, simposioCorto(s))));
+    const inQ = h("input", { class: "campo", id: "f-q", type: "search", placeholder: "Título, autor o correo", value: S.filtro.q,
+      oninput: (e) => { S.filtro.q = e.target.value; pintarTabla(); } });
+
+    const cuerpo = h("tbody");
+    function filtradas() {
+      const q = S.filtro.q.trim().toLowerCase();
+      return S.filas.filter((f) =>
+        (S.filtro.estado === "todos" || f.estado === S.filtro.estado) &&
+        (S.filtro.simposio === "todos" || f.simposio === S.filtro.simposio) &&
+        (!q || [f.titulo, f.titulo_original, f.autores, f.correo, f.nombre_remitente, String(f.id)].join(" ").toLowerCase().includes(q)));
+    }
+    function pintarTabla() {
+      const filas = filtradas();
+      cuerpo.replaceChildren(...(filas.length ? filas.map((f) => h("tr", {},
+        h("td", { class: "num" }, f.id),
+        h("td", {}, h("button", { class: "enlace", type: "button", onclick: () => vistaEditor(f.id) }, f.titulo || f.titulo_original || "(Sin título)"),
+          h("span", { class: "pequeno" }, f.autores || f.autores_original || "")),
+        h("td", {}, f.nombre_remitente, h("span", { class: "pequeno" }, f.correo)),
+        h("td", {}, simposioCorto(f.simposio), h("span", { class: "pequeno" }, DECISION[f.decision] || f.decision)),
+        h("td", {}, chipEstado(f.estado)),
+        h("td", { class: "num" }, fmtFecha(f.listo_en || f.actualizado))))
+        : [h("tr", {}, h("td", { colspan: 6, class: "vacio" }, "Ningún resumen coincide con los filtros."))]));
+    }
+
+    c.replaceChildren(
+      h("h2", {}, "Panel de seguimiento"),
+      h("p", { class: "sub" }, "Avance de las correcciones. Abre cualquier resumen para leerlo o editarlo."),
+      h("div", { class: "resumen-avance" },
+        h("div", { class: "grande" }, nL, h("small", {}, ` de ${total} entregados`)),
+        h("div", { class: "dato" }, "En edición ", h("b", {}, nB)),
+        h("div", { class: "dato" }, "Sin cambios ", h("b", {}, nP))),
+      h("div", { class: "barra-avance", role: "img", "aria-label": `${nL} entregados, ${nB} en edición, ${nP} sin cambios` },
+        h("div", { class: "l", style: `width:${total ? (nL / total) * 100 : 0}%` }),
+        h("div", { class: "b", style: `width:${total ? (nB / total) * 100 : 0}%` })),
+      h("div", { class: "herramientas" },
+        h("div", { class: "filtro" }, h("label", { for: "f-estado" }, "Estado"), selEstado),
+        h("div", { class: "filtro" }, h("label", { for: "f-simposio" }, "Simposio"), selSimp),
+        h("div", { class: "filtro" }, h("label", { for: "f-q" }, "Buscar"), inQ),
+        h("span", { class: "espacio" }),
+        h("button", { class: "boton secundario", type: "button", onclick: async () => { await cargarFilas(); vistaAdmin(); toast("Datos actualizados"); } }, "Actualizar"),
+        h("button", { class: "boton secundario", type: "button", onclick: () => exportar(filtradas(), "resumenes_filtrados") }, "Descargar vista actual"),
+        h("button", { class: "boton primario", type: "button", onclick: () => exportar(S.filas.filter((f) => f.estado === "listo"), "resumenes_entregados") }, "Descargar entregados")),
+      h("div", { class: "tabla-envoltura" },
+        h("table", {},
+          h("thead", {}, h("tr", {}, ["ID", "Título y autores", "Remitente", "Simposio", "Estado", "Última actividad"].map((t) => h("th", {}, t)))),
+          cuerpo)));
+    pintarTabla();
+  }
+
+  function exportar(filas, nombre) {
+    if (!filas.length) { toast("No hay resúmenes para descargar."); return; }
+    if (!window.XLSX) { toast("No se pudo cargar la librería de Excel. Revisa tu conexión."); return; }
+    const datos = filas.map((f) => ({
+      "ID": f.id,
+      "Estado": ESTADO[f.estado] || f.estado,
+      "Entregado": fmtFecha(f.listo_en),
+      "Simposio": f.simposio,
+      "Decisión": DECISION[f.decision] || f.decision,
+      "Título": f.titulo,
+      "Autores": f.autores,
+      "Presentador": f.presentador,
+      "Resumen": f.resumen,
+      "Palabras": palabras(f.resumen),
+      "Correo remitente": f.correo,
+      "Nombre remitente": f.nombre_remitente,
+      "Editado por": f.editado_por || "",
+      "Última edición": fmtFecha(f.actualizado),
+      "Cambió el título": (f.titulo || "").trim() !== (f.titulo_original || "").trim() ? "Sí" : "No",
+      "Cambió el resumen": (f.resumen || "").trim() !== (f.resumen_original || "").trim() ? "Sí" : "No",
+      "Título original": f.titulo_original,
+      "Autores originales": f.autores_original,
+      "Resumen original": f.resumen_original,
+    }));
+    const hoja = XLSX.utils.json_to_sheet(datos);
+    hoja["!cols"] = [6, 12, 18, 30, 14, 50, 40, 22, 90, 9, 30, 24, 28, 18, 10, 10, 50, 40, 90].map((w) => ({ wch: w }));
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, "Resúmenes");
+    const fecha = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(libro, `${nombre}_${fecha}.xlsx`);
+  }
+
+  // ---------- Arranque ----------
+  (async function iniciar() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) entrar(session); else mostrarIngreso();
+    sb.auth.onAuthStateChange((evento) => { if (evento === "SIGNED_OUT") mostrarIngreso(); });
+  })();
+})();
+</script>
+</body>
+</html>
