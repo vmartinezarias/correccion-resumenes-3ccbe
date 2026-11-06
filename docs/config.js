@@ -5,7 +5,7 @@
 //   - Publishable key (sb_publishable_...): en "API Keys"
 // NUNCA pongas aquí la secret key (sb_secret_...).
 window.CONFIG = {
-  SUPABASE_URL: "https://moyauyvqhhsuqgmgnmvv.supabase.co/rest/v1/",
+  SUPABASE_URL: "https://moyauyvqhhsuqgmgnmvv.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_cmHKcNq8djMX7ebMfmPSpA_paBu_etm",
 
   // Límite de palabras del resumen (solo avisa, no bloquea el envío).
