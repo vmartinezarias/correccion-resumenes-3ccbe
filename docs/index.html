@@ -181,6 +181,17 @@ aside h3, .panel-edicion h3 { font-size: 1rem; font-weight: 700; margin: 0 0 12p
 .revision p, .original p {
   font-family: var(--serif); font-size: 1rem; line-height: 1.6; margin: 0; white-space: pre-wrap;
 }
+.anotaciones { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }
+.anotaciones li { display: grid; gap: 4px; }
+.anotaciones mark {
+  background: #FFF2B3; color: #3B2F00; padding: 1px 4px; border-radius: 3px;
+  font-family: var(--serif); font-size: .97rem; line-height: 1.55;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.anotaciones .previo { font-size: .8rem; color: var(--tinta-suave); font-style: italic; }
+.anotaciones .comentario { font-family: var(--serif); font-size: 1rem; line-height: 1.55; white-space: pre-wrap; padding-left: 12px; border-left: 2px solid var(--linea); }
+.respuesta-guia { font-size: .88rem; color: var(--tinta-suave); margin: 0 0 8px; }
+#ed-respuesta { min-height: 160px; }
 .sin-comentarios { color: var(--tinta-suave); font-size: .92rem; background: var(--superficie); border: 1px dashed var(--linea); border-radius: var(--radio); padding: 14px 16px; }
 details.original { margin-top: 6px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--superficie); }
 details.original summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: .92rem; }
@@ -359,7 +370,10 @@ dialog .acciones { justify-content: flex-end; }
       h("p", { class: "sub" }, "Edita el archivo config.js con la URL y la clave pública (anon) de tu proyecto de Supabase.")));
     return;
   }
-  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {
+  // Acepta la URL aunque venga con ruta (/rest/v1/, barra final, etc.): solo usa el dominio.
+  let urlSupabase = C.SUPABASE_URL.trim();
+  try { urlSupabase = new URL(urlSupabase).origin; } catch (e) {}
+  const sb = window.supabase.createClient(urlSupabase, (C.SUPABASE_ANON_KEY || "").trim(), {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
   });
 
@@ -490,7 +504,14 @@ dialog .acciones { justify-content: flex-end; }
       ? revs.map((r) => h("div", { class: "revision" },
           h("h4", {}, "Revisor " + r.revisor),
           r.generales ? [h("h5", {}, "Comentarios generales"), h("p", {}, r.generales)] : null,
-          r.texto ? [h("h5", {}, "Comentarios sobre el texto"), h("p", {}, r.texto)] : null))
+          r.texto ? [h("h5", {}, "Comentarios sobre el texto"), h("p", {}, r.texto)] : null,
+          (r.anotaciones && r.anotaciones.length) ? [
+            h("h5", {}, "Comentarios sobre el texto"),
+            h("ul", { class: "anotaciones" }, r.anotaciones.map((a) => h("li", {},
+              a.seleccion ? h("div", {}, h("mark", {}, a.seleccion))
+                          : h("div", { class: "previo" }, "Comentario sobre una versión anterior del texto"),
+              h("div", { class: "comentario" }, a.comentario))))
+          ] : null))
       : h("div", { class: "sin-comentarios" }, "Los revisores no dejaron comentarios escritos. Revisa la redacción y, si todo está bien, entrega el resumen.");
 
     const inTitulo = h("textarea", { id: "ed-titulo", class: "campo", rows: 2, readOnly: bloqueado }, );
@@ -499,6 +520,9 @@ dialog .acciones { justify-content: flex-end; }
     inTitulo.value = f.titulo ?? f.titulo_original ?? "";
     inAutores.value = f.autores ?? f.autores_original ?? "";
     inResumen.value = f.resumen ?? f.resumen_original ?? "";
+    const inRespuesta = h("textarea", { id: "ed-respuesta", class: "campo", readOnly: bloqueado,
+      placeholder: bloqueado ? "" : "Ejemplo: Revisor 1, comentario sobre el nombre de la especie: añadimos el nombre científico. Comentario sobre el índice NDSI: no lo incluimos porque…" });
+    inRespuesta.value = f.respuesta ?? "";
 
     const contador = h("div", { class: "contador", "aria-live": "polite" });
     const guardadoTxt = h("span", { class: "guardado" }, f.actualizado ? "Última edición: " + fmtFecha(f.actualizado) : "");
@@ -514,14 +538,14 @@ dialog .acciones { justify-content: flex-end; }
 
     function alEditar() {
       S.sucio = true; actualizarContador();
-      guardarLocal(claveLocal, { titulo: inTitulo.value, autores: inAutores.value, resumen: inResumen.value, t: Date.now() });
+      guardarLocal(claveLocal, { titulo: inTitulo.value, autores: inAutores.value, resumen: inResumen.value, respuesta: inRespuesta.value, t: Date.now() });
     }
-    [inTitulo, inAutores, inResumen].forEach((el) => el.addEventListener("input", alEditar));
+    [inTitulo, inAutores, inResumen, inRespuesta].forEach((el) => el.addEventListener("input", alEditar));
 
     async function guardar(nuevoEstado) {
       const botones = c.querySelectorAll(".acciones .boton");
       botones.forEach((b) => (b.disabled = true));
-      const cambios = { titulo: inTitulo.value.trim(), autores: inAutores.value.trim(), resumen: inResumen.value.trim(), estado: nuevoEstado };
+      const cambios = { titulo: inTitulo.value.trim(), autores: inAutores.value.trim(), resumen: inResumen.value.trim(), respuesta: inRespuesta.value.trim(), estado: nuevoEstado };
       const { data, error } = await sb.from("resumenes").update(cambios).eq("id", f.id).select().single();
       botones.forEach((b) => (b.disabled = false));
       if (error) { toast("No se guardó: " + error.message); return false; }
@@ -549,6 +573,10 @@ dialog .acciones { justify-content: flex-end; }
 
     function abrirEntrega() {
       if (!inResumen.value.trim()) { toast("El resumen no puede quedar vacío."); return; }
+      if (revs.length && !inRespuesta.value.trim()) {
+        toast("Antes de entregar, escribe tu respuesta a los comentarios de los revisores.");
+        inRespuesta.focus(); return;
+      }
       const dlg = $("#dlg-entregar");
       const n = palabras(inResumen.value);
       dlg.querySelector("p").textContent = (max && n > max ? `Ojo: el resumen tiene ${n} palabras y el límite es ${max}. ` : "") +
@@ -562,11 +590,11 @@ dialog .acciones { justify-content: flex-end; }
 
     let avisoLocal = null;
     const local = leerLocal(claveLocal);
-    if (local && !bloqueado && (local.titulo !== inTitulo.value || local.autores !== inAutores.value || local.resumen !== inResumen.value)) {
+    if (local && !bloqueado && (local.titulo !== inTitulo.value || local.autores !== inAutores.value || local.resumen !== inResumen.value || (local.respuesta ?? "") !== inRespuesta.value)) {
       avisoLocal = h("div", { class: "aviso local" },
         "Hay cambios sin guardar de una sesión anterior en este navegador.",
         h("button", { class: "boton texto", type: "button", onclick: () => {
-          inTitulo.value = local.titulo; inAutores.value = local.autores; inResumen.value = local.resumen;
+          inTitulo.value = local.titulo; inAutores.value = local.autores; inResumen.value = local.resumen; inRespuesta.value = local.respuesta ?? "";
           S.sucio = true; actualizarContador(); avisoLocal.remove();
         } }, "Recuperarlos"),
         h("button", { class: "boton texto", type: "button", onclick: () => { borrarLocal(claveLocal); avisoLocal.remove(); } }, "Descartar"));
@@ -600,11 +628,22 @@ dialog .acciones { justify-content: flex-end; }
           h("div", { class: "grupo" }, h("label", { for: "ed-autores" }, "Autores"), inAutores,
             h("p", { class: "ayuda" }, "Separados por comas, en el orden en que deben aparecer.")),
           h("div", { class: "grupo" }, h("label", { for: "ed-resumen" }, "Resumen"), inResumen, contador),
+          (revs.length || f.respuesta || S.admin) ? h("div", { class: "grupo" },
+            h("label", { for: "ed-respuesta" }, "Respuesta a los revisores"),
+            bloqueado || (S.admin && f.estado === "listo") ? null : h("p", { class: "respuesta-guia" },
+              "Cuenta qué cambiaste en respuesta a cada comentario, o por qué decidiste no hacerlo. " +
+              (revs.length ? "Es obligatoria para entregar." : "")),
+            (S.admin && f.estado === "listo" && !f.respuesta)
+              ? h("p", { class: "respuesta-guia" }, "Este resumen se entregó sin respuesta (antes de habilitar esta sección, o sin comentarios de revisión).")
+              : null,
+            inRespuesta) : null,
           acciones.length ? h("div", { class: "acciones" }, acciones, h("span", { class: "espacio" }), guardadoTxt) : null)));
 
     // Ajusta la altura del resumen a su contenido
     const ajustar = () => { inResumen.style.height = "auto"; inResumen.style.height = Math.max(360, inResumen.scrollHeight + 4) + "px"; };
     inResumen.addEventListener("input", ajustar); requestAnimationFrame(ajustar);
+    const ajustarR = () => { inRespuesta.style.height = "auto"; inRespuesta.style.height = Math.max(160, inRespuesta.scrollHeight + 4) + "px"; };
+    inRespuesta.addEventListener("input", ajustarR); requestAnimationFrame(ajustarR);
   }
 
   // ---------- Vista: panel de administración ----------
@@ -685,6 +724,7 @@ dialog .acciones { justify-content: flex-end; }
       "Presentador": f.presentador,
       "Resumen": f.resumen,
       "Palabras": palabras(f.resumen),
+      "Respuesta a los revisores": f.respuesta || "",
       "Correo remitente": f.correo,
       "Nombre remitente": f.nombre_remitente,
       "Editado por": f.editado_por || "",
@@ -696,7 +736,7 @@ dialog .acciones { justify-content: flex-end; }
       "Resumen original": f.resumen_original,
     }));
     const hoja = XLSX.utils.json_to_sheet(datos);
-    hoja["!cols"] = [6, 12, 18, 30, 14, 50, 40, 22, 90, 9, 30, 24, 28, 18, 10, 10, 50, 40, 90].map((w) => ({ wch: w }));
+    hoja["!cols"] = [6, 12, 18, 30, 14, 50, 40, 22, 90, 9, 70, 30, 24, 28, 18, 10, 10, 50, 40, 90].map((w) => ({ wch: w }));
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, "Resúmenes");
     const fecha = new Date().toISOString().slice(0, 10);
